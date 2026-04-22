@@ -11,7 +11,8 @@ let pendingOpenFilePath = null
 // macOS：双击 .md 文件 / 拖拽到 Dock 图标时触发
 app.on('open-file', (event, filePath) => {
   event.preventDefault()
-  if (mainWindow && mainWindow.webContents) {
+  if (mainWindow && !mainWindow.isDestroyed() && mainWindow.webContents) {
+    mainWindow.focus()
     mainWindow.webContents.send('open-file', filePath)
   } else {
     pendingOpenFilePath = filePath
@@ -33,6 +34,8 @@ function createWindow() {
       nodeIntegration: false,
     },
   })
+
+  mainWindow.on('closed', () => { mainWindow = null })
 
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173')

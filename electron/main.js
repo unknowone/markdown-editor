@@ -5,6 +5,18 @@ const fs = require('fs')
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged
 
 let mainWindow
+// 存储启动时通过文件关联传入的路径（app ready 之前可能已触发 open-file）
+let pendingOpenFilePath = null
+
+// macOS：双击 .md 文件 / 拖拽到 Dock 图标时触发
+app.on('open-file', (event, filePath) => {
+  event.preventDefault()
+  if (mainWindow && mainWindow.webContents) {
+    mainWindow.webContents.send('open-file', filePath)
+  } else {
+    pendingOpenFilePath = filePath
+  }
+})
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -28,6 +40,14 @@ function createWindow() {
   } else {
     mainWindow.loadFile(path.join(__dirname, '../dist/index.html'))
   }
+
+  // 页面加载完成后，若有待打开的文件则发送给渲染层
+  mainWindow.webContents.once('did-finish-load', () => {
+    if (pendingOpenFilePath) {
+      mainWindow.webContents.send('open-file', pendingOpenFilePath)
+      pendingOpenFilePath = null
+    }
+  })
 }
 
 // ── 菜单 ──────────────────────────────────────────────────────────────────────

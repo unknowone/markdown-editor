@@ -128,6 +128,8 @@ export default function App() {
       window.electronAPI.onMenuEvent('menu:save-as', handleSaveAs),
       window.electronAPI.onMenuEvent('menu:toggle-sidebar', () => setShowSidebar(v => !v)),
       window.electronAPI.onMenuEvent('menu:toggle-preview', () => setShowPreview(v => !v)),
+      // 双击 .md 文件直接打开
+      window.electronAPI.onMenuEvent('open-file', (_e, filePath) => loadFile(filePath)),
     ]
     return () => cleanups.forEach(fn => fn && fn())
   }, [handleNewFile, handleOpenFile, handleSave, handleSaveAs, openFolder])

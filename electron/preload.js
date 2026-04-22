@@ -21,6 +21,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
       'menu:save-as',
       'menu:toggle-sidebar',
       'menu:toggle-preview',
+      'open-file',
     ]
     if (validChannels.includes(channel)) {
       ipcRenderer.on(channel, callback)

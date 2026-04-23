@@ -211,10 +211,11 @@ export default function App() {
             onChange={handleContentChange}
             fontSize={fontSize}
             showPreview={showPreview}
+            currentFilePath={currentFilePath}
           />
 
           {showPreview && (
-            <Preview content={content} fontSize={fontSize} />
+            <Preview content={content} fontSize={fontSize} currentFilePath={currentFilePath} />
           )}
         </div>
 

@@ -151,6 +151,11 @@ textarea, .markdown-preview, .file-tree {
 .markdown-preview img {
   max-width: 100%;
   border-radius: 6px;
+  cursor: zoom-in;
+  transition: transform 0.15s ease;
+}
+.markdown-preview img:hover {
+  transform: scale(1.01);
 }
 
 /* ── highlight.js 主题 (Catppuccin Mocha 风格) ──────────────── */

@@ -11,6 +11,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   openFolderDialog: () => ipcRenderer.invoke('dialog:open-folder'),
   saveFileDialog: (defaultName) => ipcRenderer.invoke('dialog:save-file', defaultName),
 
+  // 图片
+  saveImage: (payload) => ipcRenderer.invoke('image:save', payload),
+
   // 菜单事件监听
   onMenuEvent: (channel, callback) => {
     const validChannels = [

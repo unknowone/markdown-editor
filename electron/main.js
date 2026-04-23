@@ -32,6 +32,7 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
+      webSecurity: false,
     },
   })
 
@@ -214,6 +215,34 @@ ipcMain.handle('dialog:save-file', async (_e, defaultName) => {
   })
   if (result.canceled) return { canceled: true }
   return { canceled: false, filePath: result.filePath }
+})
+
+// 保存图片到磁盘。currentFilePath 存在时保存到同级 assets/ 目录；否则存到 userData/images
+ipcMain.handle('image:save', async (_e, { buffer, ext, currentFilePath }) => {
+  try {
+    let targetDir
+    let relBase
+    if (currentFilePath) {
+      targetDir = path.join(path.dirname(currentFilePath), 'assets')
+      relBase = 'assets'
+    } else {
+      targetDir = path.join(app.getPath('userData'), 'images')
+      relBase = targetDir
+    }
+    if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true })
+
+    const fileName = `image-${Date.now()}.${ext || 'png'}`
+    const absPath = path.join(targetDir, fileName)
+    fs.writeFileSync(absPath, Buffer.from(buffer))
+
+    // 当有文档路径时返回相对路径（更便携），否则返回绝对路径
+    const relativePath = currentFilePath
+      ? `${relBase}/${fileName}`
+      : absPath
+    return { success: true, absPath, relativePath }
+  } catch (err) {
+    return { success: false, error: err.message }
+  }
 })
 
 // ── 应用生命周期 ──────────────────────────────────────────────────────────────

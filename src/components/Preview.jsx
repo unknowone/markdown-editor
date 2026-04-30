@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState, useEffect } from 'react'
+import { Maximize2, Minimize2 } from 'lucide-react'
 import { marked } from 'marked'
 import { markedHighlight } from 'marked-highlight'
 import hljs from 'highlight.js'
@@ -37,6 +38,7 @@ function resolveImageSrc(src, currentFilePath) {
 export default function Preview({ content, fontSize, currentFilePath }) {
   const scrollRef = useRef(null)
   const [lightboxSrc, setLightboxSrc] = useState(null)
+  const [isFullscreen, setIsFullscreen] = useState(false)
 
   // 自定义 renderer：改写图片 src
   const html = useMemo(() => {
@@ -67,19 +69,36 @@ export default function Preview({ content, fontSize, currentFilePath }) {
     return () => container.removeEventListener('dblclick', handler)
   }, [html])
 
-  // ESC 关闭 Lightbox
+  // ESC 关闭 Lightbox 或退出全屏
   useEffect(() => {
-    if (!lightboxSrc) return
-    const onKey = (e) => { if (e.key === 'Escape') setLightboxSrc(null) }
+    if (!lightboxSrc && !isFullscreen) return
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        if (lightboxSrc) setLightboxSrc(null)
+        else if (isFullscreen) setIsFullscreen(false)
+      }
+    }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [lightboxSrc])
+  }, [lightboxSrc, isFullscreen])
 
   return (
-    <div className="flex flex-col w-1/2 overflow-hidden bg-[#181825] relative">
+    <div className={`flex flex-col overflow-hidden bg-[#181825] relative
+      ${isFullscreen
+        ? 'fixed inset-0 z-40'
+        : 'w-1/2'
+      }`}
+    >
       {/* 预览标头 */}
-      <div className="flex items-center h-8 px-4 bg-[#181825] border-b border-[#313244] text-xs text-[#6c7086] shrink-0">
-        <span>预览（双击图片放大）</span>
+      <div className="flex items-center justify-between h-8 px-4 bg-[#181825] border-b border-[#313244] text-xs text-[#6c7086] shrink-0">
+        <span>预览{isFullscreen ? '（全屏）' : '（双击图片放大）'}</span>
+        <button
+          onClick={() => setIsFullscreen(v => !v)}
+          className="p-1 rounded hover:bg-[#313244] text-[#6c7086] hover:text-[#cdd6f4] transition-colors"
+          title={isFullscreen ? '退出全屏 (ESC)' : '全屏预览'}
+        >
+          {isFullscreen ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+        </button>
       </div>
       <div
         ref={scrollRef}

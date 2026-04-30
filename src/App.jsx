@@ -189,14 +189,14 @@ export default function App() {
     : '未命名文件.md'
 
   return (
-    <div className="flex flex-col h-screen bg-[#1e1e2e]">
+    <div className="flex flex-col h-screen bg-white">
       {/* 标题栏 */}
-      <div className="titlebar-drag flex items-center h-10 px-4 bg-[#181825] border-b border-[#313244] shrink-0">
-        <div className="titlebar-no-drag flex items-center gap-2 mr-4 w-16">
+      <div className="titlebar-drag flex items-center h-11 px-4 bg-white/85 backdrop-blur-xl shadow-[0_0.5px_0_rgba(0,0,0,0.1)] shrink-0 relative z-10">
+        <div className="titlebar-no-drag flex items-center gap-2 mr-4 w-[72px]">
           {/* macOS traffic lights 占位 */}
         </div>
         <div className="flex-1 flex items-center justify-center gap-2 titlebar-no-drag">
-          <span className="text-sm text-[#a6adc8] font-medium">
+          <span className="text-[13px] text-[#1d1d1f] font-medium">
             {isDirty ? '● ' : ''}{fileName}
           </span>
         </div>

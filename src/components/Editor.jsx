@@ -66,12 +66,12 @@ export default function Editor({ content, onChange, fontSize, showPreview, curre
 
   return (
     <div
-      className={`flex flex-col overflow-hidden bg-[#1e1e2e] ${
-        showPreview ? 'w-1/2 border-r border-[#313244]' : 'flex-1'
+      className={`flex flex-col overflow-hidden bg-white ${
+        showPreview ? 'w-1/2 border-r border-black/[0.06]' : 'flex-1'
       }`}
     >
       {/* 编辑器标头 */}
-      <div className="flex items-center h-8 px-4 bg-[#181825] border-b border-[#313244] text-xs text-[#6c7086] shrink-0">
+      <div className="flex items-center h-8 px-4 bg-[#fafafa] border-b border-black/[0.04] text-xs text-[#86868b] shrink-0">
         <span>编辑</span>
       </div>
       <textarea

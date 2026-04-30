@@ -8,13 +8,13 @@ function ToolBtn({ icon: Icon, title, active, onClick }) {
     <button
       onClick={onClick}
       title={title}
-      className={`p-1.5 rounded transition-colors titlebar-no-drag
+      className={`p-1.5 rounded-lg transition-all duration-150 titlebar-no-drag
         ${active
-          ? 'bg-[#313244] text-[#cdd6f4]'
-          : 'text-[#6c7086] hover:bg-[#313244] hover:text-[#cdd6f4]'
+          ? 'bg-black/[0.07] text-[#1d1d1f]'
+          : 'text-[#86868b] hover:bg-black/[0.05] hover:text-[#1d1d1f]'
         }`}
     >
-      <Icon size={15} />
+      <Icon size={15} strokeWidth={1.8} />
     </button>
   )
 }
@@ -37,29 +37,29 @@ export default function Toolbar({
         onClick={onSave}
       />
 
-      <div className="w-px h-4 bg-[#313244] mx-1" />
+      <div className="w-px h-4 bg-black/[0.08] mx-1.5" />
 
-      <ToolBtn icon={PanelLeft}    title="切换侧边栏 ⌘B"  active={showSidebar}  onClick={onToggleSidebar} />
-      <ToolBtn icon={LayoutTemplate} title="切换预览 ⌘P"  active={showPreview}  onClick={onTogglePreview} />
-      <ToolBtn icon={List}         title="目录"            active={showToc}      onClick={onToggleToc} />
+      <ToolBtn icon={PanelLeft}      title="切换侧边栏 ⌘B"  active={showSidebar}  onClick={onToggleSidebar} />
+      <ToolBtn icon={LayoutTemplate} title="切换预览 ⌘P"     active={showPreview}  onClick={onTogglePreview} />
+      <ToolBtn icon={List}           title="目录"            active={showToc}      onClick={onToggleToc} />
 
-      <div className="w-px h-4 bg-[#313244] mx-1" />
+      <div className="w-px h-4 bg-black/[0.08] mx-1.5" />
 
       {/* 字号调节 */}
       <button
         onClick={() => onFontSizeChange(s => Math.max(10, s - 1))}
         title="缩小字体"
-        className="p-1.5 rounded text-[#6c7086] hover:bg-[#313244] hover:text-[#cdd6f4] transition-colors"
+        className="p-1.5 rounded-lg text-[#86868b] hover:bg-black/[0.05] hover:text-[#1d1d1f] transition-all duration-150"
       >
-        <Minus size={14} />
+        <Minus size={14} strokeWidth={1.8} />
       </button>
-      <span className="text-xs text-[#6c7086] w-6 text-center">{fontSize}</span>
+      <span className="text-xs text-[#86868b] w-6 text-center font-medium">{fontSize}</span>
       <button
         onClick={() => onFontSizeChange(s => Math.min(24, s + 1))}
         title="放大字体"
-        className="p-1.5 rounded text-[#6c7086] hover:bg-[#313244] hover:text-[#cdd6f4] transition-colors"
+        className="p-1.5 rounded-lg text-[#86868b] hover:bg-black/[0.05] hover:text-[#1d1d1f] transition-all duration-150"
       >
-        <Plus size={14} />
+        <Plus size={14} strokeWidth={1.8} />
       </button>
     </div>
   )

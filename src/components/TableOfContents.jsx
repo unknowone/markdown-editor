@@ -25,29 +25,28 @@ export default function TableOfContents({ content }) {
   const headings = useMemo(() => extractHeadings(content), [content])
 
   return (
-    <div className="flex flex-col w-52 shrink-0 bg-[#181825] border-l border-[#313244] overflow-hidden">
-      <div className="flex items-center h-8 px-3 border-b border-[#313244] shrink-0">
-        <span className="text-xs font-semibold text-[#6c7086] uppercase tracking-wider">目录</span>
+    <div className="flex flex-col w-52 shrink-0 bg-[#fafafa] border-l border-black/[0.06] overflow-hidden">
+      <div className="flex items-center h-8 px-3.5 border-b border-black/[0.04] shrink-0">
+        <span className="text-xs font-semibold text-[#86868b] uppercase tracking-wider">目录</span>
       </div>
       <div className="flex-1 overflow-y-auto py-2">
         {headings.length === 0 ? (
-          <p className="text-xs text-[#6c7086] px-3 py-2">无标题</p>
+          <p className="text-xs text-[#aeaeb2] px-3.5 py-2">无标题</p>
         ) : (
           headings.map((h, i) => (
             <div
               key={i}
-              className="flex items-start px-3 py-0.5 cursor-pointer hover:bg-[#313244] rounded mx-1 transition-colors group"
-              style={{ paddingLeft: `${8 + (h.level - 1) * 12}px` }}
+              className="flex items-start px-3 py-[3px] cursor-pointer hover:bg-black/[0.04] rounded-lg mx-1.5 transition-all duration-150 group"
+              style={{ paddingLeft: `${10 + (h.level - 1) * 12}px` }}
               onClick={() => {
-                // 滚动到对应标题（预览区）
                 const el = document.getElementById(h.id)
                 el?.scrollIntoView({ behavior: 'smooth' })
               }}
             >
-              <span className="text-xs text-[#6c7086] mr-1.5 shrink-0 group-hover:text-[#89b4fa]">
+              <span className="text-[10px] text-[#aeaeb2] mr-1.5 shrink-0 mt-[1px] group-hover:text-[#007AFF] font-medium">
                 {'H' + h.level}
               </span>
-              <span className="text-xs text-[#a6adc8] truncate group-hover:text-[#cdd6f4]">
+              <span className="text-xs text-[#48484a] truncate group-hover:text-[#007AFF]">
                 {h.text}
               </span>
             </div>

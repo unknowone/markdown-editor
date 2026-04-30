@@ -52,7 +52,7 @@ export default function Preview({ content, fontSize, currentFilePath }) {
     try {
       return marked.parse(content || '', { renderer })
     } catch {
-      return '<p style="color:#f38ba8">渲染出错</p>'
+      return '<p style="color:#ff3b30">渲染出错</p>'
     }
   }, [content, currentFilePath])
 
@@ -83,21 +83,21 @@ export default function Preview({ content, fontSize, currentFilePath }) {
   }, [lightboxSrc, isFullscreen])
 
   return (
-    <div className={`flex flex-col overflow-hidden bg-[#181825] relative
+    <div className={`flex flex-col overflow-hidden bg-white relative
       ${isFullscreen
         ? 'fixed inset-0 z-40'
         : 'w-1/2'
       }`}
     >
       {/* 预览标头 */}
-      <div className="flex items-center justify-between h-8 px-4 bg-[#181825] border-b border-[#313244] text-xs text-[#6c7086] shrink-0">
+      <div className="flex items-center justify-between h-8 px-4 bg-[#fafafa] border-b border-black/[0.04] text-xs text-[#86868b] shrink-0">
         <span>预览{isFullscreen ? '（全屏）' : '（双击图片放大）'}</span>
         <button
           onClick={() => setIsFullscreen(v => !v)}
-          className="p-1 rounded hover:bg-[#313244] text-[#6c7086] hover:text-[#cdd6f4] transition-colors"
+          className="p-1 rounded-md hover:bg-black/[0.06] text-[#86868b] hover:text-[#1d1d1f] transition-all duration-150"
           title={isFullscreen ? '退出全屏 (ESC)' : '全屏预览'}
         >
-          {isFullscreen ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+          {isFullscreen ? <Minimize2 size={13} strokeWidth={1.8} /> : <Maximize2 size={13} strokeWidth={1.8} />}
         </button>
       </div>
       <div
@@ -114,17 +114,17 @@ export default function Preview({ content, fontSize, currentFilePath }) {
       {/* 图片 Lightbox */}
       {lightboxSrc && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm cursor-zoom-out"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md cursor-zoom-out"
           onClick={() => setLightboxSrc(null)}
         >
           <img
             src={lightboxSrc}
             alt=""
-            className="max-w-[95vw] max-h-[95vh] object-contain rounded-lg shadow-2xl"
+            className="max-w-[90vw] max-h-[90vh] object-contain rounded-xl shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           />
           <button
-            className="absolute top-6 right-6 text-white/70 hover:text-white text-3xl leading-none"
+            className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-white/20 text-white/80 hover:bg-white/30 hover:text-white text-lg transition-all duration-150"
             onClick={() => setLightboxSrc(null)}
             title="关闭 (ESC)"
           >

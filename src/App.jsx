@@ -57,7 +57,7 @@ export default function App() {
   const [isDirty, setIsDirty] = useState(false)
   const [fontSize, setFontSize] = useState(14)
 
-  const { openFile, saveFile, saveFileAs, openFolder, currentFolder, folderTree } = useFileSystem()
+  const { openFile, saveFile, saveFileAs, openFolder, currentFolder, folderTree, refreshFolder } = useFileSystem()
 
   // 加载文件内容
   const loadFile = useCallback(async (filePath) => {
@@ -113,6 +113,35 @@ export default function App() {
     setCurrentFilePath(null)
     setIsDirty(false)
   }, [])
+
+  // 在当前文件夹新建文件
+  const handleCreateFile = useCallback(async (fileName) => {
+    if (!window.electronAPI || !currentFolder) return { success: false, error: '请先打开文件夹' }
+    const result = await window.electronAPI.createFile(currentFolder, fileName)
+    if (result.success) {
+      await refreshFolder()
+      // 自动打开新建的文件
+      setContent('')
+      setCurrentFilePath(result.filePath)
+      setIsDirty(false)
+    }
+    return result
+  }, [currentFolder, refreshFolder])
+
+  // 删除文件
+  const handleDeleteFile = useCallback(async (filePath) => {
+    if (!window.electronAPI) return
+    const result = await window.electronAPI.deleteFile(filePath)
+    if (result.success) {
+      await refreshFolder()
+      // 如果删除的是当前打开的文件，重置编辑器
+      if (filePath === currentFilePath) {
+        setContent('')
+        setCurrentFilePath(null)
+        setIsDirty(false)
+      }
+    }
+  }, [currentFilePath, refreshFolder])
 
   // 注册菜单事件
   useEffect(() => {
@@ -194,6 +223,7 @@ export default function App() {
           <Sidebar
             folderTree={folderTree}
             currentFilePath={currentFilePath}
+            currentFolder={currentFolder}
             onFileSelect={loadFile}
             onOpenFolder={async () => {
               if (window.electronAPI) {
@@ -201,6 +231,8 @@ export default function App() {
                 if (!result.canceled) openFolder(result.dirPath)
               }
             }}
+            onCreateFile={handleCreateFile}
+            onDeleteFile={handleDeleteFile}
           />
         )}
 

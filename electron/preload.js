@@ -5,6 +5,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   readFile: (filePath) => ipcRenderer.invoke('fs:read-file', filePath),
   writeFile: (filePath, content) => ipcRenderer.invoke('fs:write-file', filePath, content),
   readDir: (dirPath) => ipcRenderer.invoke('fs:read-dir', dirPath),
+  createFile: (dirPath, fileName) => ipcRenderer.invoke('fs:create-file', dirPath, fileName),
+  deleteFile: (filePath) => ipcRenderer.invoke('fs:delete-file', filePath),
 
   // 对话框
   openFileDialog: () => ipcRenderer.invoke('dialog:open-file'),

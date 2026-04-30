@@ -13,9 +13,18 @@ export function useFileSystem() {
     }
   }, [])
 
+  const refreshFolder = useCallback(async () => {
+    if (!currentFolder || !window.electronAPI) return
+    const result = await window.electronAPI.readDir(currentFolder)
+    if (result.success) {
+      setFolderTree(result.items)
+    }
+  }, [currentFolder])
+
   return {
     currentFolder,
     folderTree,
     openFolder,
+    refreshFolder,
   }
 }

@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, Menu } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog, Menu, shell } = require('electron')
 const path = require('path')
 const fs = require('fs')
 
@@ -215,6 +215,30 @@ ipcMain.handle('dialog:save-file', async (_e, defaultName) => {
   })
   if (result.canceled) return { canceled: true }
   return { canceled: false, filePath: result.filePath }
+})
+
+// 新建文件
+ipcMain.handle('fs:create-file', async (_e, dirPath, fileName) => {
+  try {
+    const filePath = path.join(dirPath, fileName)
+    if (fs.existsSync(filePath)) {
+      return { success: false, error: '文件已存在' }
+    }
+    fs.writeFileSync(filePath, '', 'utf-8')
+    return { success: true, filePath }
+  } catch (err) {
+    return { success: false, error: err.message }
+  }
+})
+
+// 删除文件（移动到回收站）
+ipcMain.handle('fs:delete-file', async (_e, filePath) => {
+  try {
+    await shell.trashItem(filePath)
+    return { success: true }
+  } catch (err) {
+    return { success: false, error: err.message }
+  }
 })
 
 // 保存图片到磁盘。currentFilePath 存在时保存到同级 assets/ 目录；否则存到 userData/images

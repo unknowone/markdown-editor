@@ -1,20 +1,9 @@
 import { useMemo, useRef, useState, useEffect } from 'react'
 import { Maximize2, Minimize2 } from 'lucide-react'
 import { marked } from 'marked'
-import { markedHighlight } from 'marked-highlight'
 import hljs from 'highlight.js'
 
-// 配置 marked
-marked.use(
-  markedHighlight({
-    langPrefix: 'hljs language-',
-    highlight(code, lang) {
-      const language = hljs.getLanguage(lang) ? lang : 'plaintext'
-      return hljs.highlight(code, { language }).value
-    },
-  })
-)
-
+// 配置 marked（不使用 markedHighlight 插件，在 renderer.code 中手动高亮）
 marked.setOptions({
   gfm: true,
   breaks: true,
@@ -47,8 +36,7 @@ export default function Preview({ content, fontSize, currentFilePath, splitRatio
       return `<img src="${resolved}" alt="${text || ''}"${titleAttr} class="md-img" />`
     }
 
-    // ```html 代码块：直接渲染 HTML
-    const originalCode = renderer.code
+    // ```html 代码块：直接渲染 HTML；其他语言正常高亮
     renderer.code = ({ text, lang }) => {
       const language = lang?.toLowerCase() || ''
       if (language === 'html' || language === 'htm') {

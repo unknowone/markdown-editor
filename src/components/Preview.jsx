@@ -47,20 +47,13 @@ export default function Preview({ content, fontSize, currentFilePath, splitRatio
       return `<img src="${resolved}" alt="${text || ''}"${titleAttr} class="md-img" />`
     }
 
-    // ```html 代码块：显示高亮代码 + 下方实时渲染预览
+    // ```html 代码块：直接渲染 HTML
     const originalCode = renderer.code
-    renderer.code = ({ text, lang, escaped }) => {
+    renderer.code = ({ text, lang }) => {
       const language = lang?.toLowerCase() || ''
-
-      // 对 html 代码块，在高亮源码下方追加渲染预览区
       if (language === 'html' || language === 'htm') {
-        const highlighted = hljs.highlight(text, { language: 'html' }).value
-        const escapedCode = `<pre><code class="hljs language-html">${highlighted}</code></pre>`
-        const preview = `<div class="html-live-preview">${text}</div>`
-        return escapedCode + preview
+        return `<div class="html-live-preview">${text}</div>`
       }
-
-      // 其他语言正常高亮
       const validLang = hljs.getLanguage(language) ? language : 'plaintext'
       const highlighted = hljs.highlight(text, { language: validLang }).value
       return `<pre><code class="hljs language-${validLang}">${highlighted}</code></pre>`

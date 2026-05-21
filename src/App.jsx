@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Sidebar from './components/Sidebar.jsx'
 import Editor from './components/Editor.jsx'
 import Preview from './components/Preview.jsx'
@@ -56,6 +56,10 @@ export default function App() {
   const [currentFilePath, setCurrentFilePath] = useState(null)
   const [isDirty, setIsDirty] = useState(false)
   const [fontSize, setFontSize] = useState(14)
+  const [splitRatio, setSplitRatio] = useState(0.5) // 编辑区占比
+  const [previewFullscreen, setPreviewFullscreen] = useState(false)
+  const splitContainerRef = useRef(null)
+  const isDraggingRef = useRef(false)
 
   const { openFile, saveFile, saveFileAs, openFolder, currentFolder, folderTree, refreshFolder } = useFileSystem()
 
@@ -183,6 +187,32 @@ export default function App() {
     setIsDirty(true)
   }
 
+  // 拖拽分割线
+  const handleSplitMouseDown = useCallback((e) => {
+    e.preventDefault()
+    isDraggingRef.current = true
+    document.body.style.cursor = 'col-resize'
+    document.body.style.userSelect = 'none'
+
+    const onMouseMove = (ev) => {
+      if (!isDraggingRef.current || !splitContainerRef.current) return
+      const rect = splitContainerRef.current.getBoundingClientRect()
+      const ratio = (ev.clientX - rect.left) / rect.width
+      setSplitRatio(Math.min(0.8, Math.max(0.2, ratio)))
+    }
+
+    const onMouseUp = () => {
+      isDraggingRef.current = false
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+      document.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseup', onMouseUp)
+    }
+
+    document.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseup', onMouseUp)
+  }, [])
+
   // 当前文件名
   const fileName = currentFilePath
     ? currentFilePath.split('/').pop()
@@ -236,18 +266,36 @@ export default function App() {
           />
         )}
 
-        {/* 编辑区 */}
-        <div className={`flex flex-1 overflow-hidden ${!showPreview ? '' : ''}`}>
+        {/* 编辑区 + 分割线 + 预览区 */}
+        <div ref={splitContainerRef} className="flex flex-1 overflow-hidden relative">
           <Editor
             content={content}
             onChange={handleContentChange}
             fontSize={fontSize}
             showPreview={showPreview}
             currentFilePath={currentFilePath}
+            splitRatio={splitRatio}
           />
 
           {showPreview && (
-            <Preview content={content} fontSize={fontSize} currentFilePath={currentFilePath} />
+            <>
+              {/* 可拖拽分割线 */}
+              <div
+                onMouseDown={handleSplitMouseDown}
+                className="w-[5px] shrink-0 cursor-col-resize flex items-center justify-center group hover:bg-[#007AFF]/10 transition-colors duration-150 relative z-10"
+              >
+                <div className="w-[1px] h-full bg-black/[0.06] group-hover:bg-[#007AFF]/40 transition-colors duration-150" />
+              </div>
+
+              <Preview
+                content={content}
+                fontSize={fontSize}
+                currentFilePath={currentFilePath}
+                splitRatio={splitRatio}
+                isFullscreen={previewFullscreen}
+                onToggleFullscreen={() => setPreviewFullscreen(v => !v)}
+              />
+            </>
           )}
         </div>
 
@@ -256,6 +304,20 @@ export default function App() {
           <TableOfContents content={content} />
         )}
       </div>
+
+      {/* 预览全屏层 — 放在最外层以避免 stacking context 问题 */}
+      {previewFullscreen && (
+        <div className="fixed inset-0 z-[9999] bg-white">
+          <Preview
+            content={content}
+            fontSize={fontSize}
+            currentFilePath={currentFilePath}
+            splitRatio={1}
+            isFullscreen={true}
+            onToggleFullscreen={() => setPreviewFullscreen(false)}
+          />
+        </div>
+      )}
     </div>
   )
 }

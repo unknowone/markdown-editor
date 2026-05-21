@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 
-export default function Editor({ content, onChange, fontSize, showPreview, currentFilePath }) {
+export default function Editor({ content, onChange, fontSize, showPreview, currentFilePath, splitRatio }) {
   const textareaRef = useRef(null)
 
   // 在光标处插入文本
@@ -66,9 +66,8 @@ export default function Editor({ content, onChange, fontSize, showPreview, curre
 
   return (
     <div
-      className={`flex flex-col overflow-hidden bg-white ${
-        showPreview ? 'w-1/2 border-r border-black/[0.06]' : 'flex-1'
-      }`}
+      className="flex flex-col overflow-hidden bg-white"
+      style={{ width: showPreview ? `${splitRatio * 100}%` : '100%' }}
     >
       {/* 编辑器标头 */}
       <div className="flex items-center h-8 px-4 bg-[#fafafa] border-b border-black/[0.04] text-xs text-[#86868b] shrink-0">

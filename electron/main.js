@@ -172,7 +172,7 @@ ipcMain.handle('fs:read-dir', async (_e, dirPath) => {
   try {
     const entries = fs.readdirSync(dirPath, { withFileTypes: true })
     const items = entries
-      .filter(e => e.isDirectory() || e.name.endsWith('.md'))
+      .filter(e => e.isDirectory() || /\.(md|markdown)$/i.test(e.name))
       .map(e => ({
         name: e.name,
         path: path.join(dirPath, e.name),
